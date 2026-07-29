@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日晨報廣播</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; line-height: 1.6; }
+        .card { background: #f4f4f9; border-radius: 10px; padding: 20px; max-width: 500px; margin: 20px auto; }
+        button { background: #007bff; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>🎙️ 今日晨報內容</h2>
+    <div class="card">
+        <p id="content">載入中...</p>
+    </div>
+    <button onclick="speakNews()">🔊 播放語音</button>
+
+    <script>
+        let newsText = "";
+
+        // 讀取同目錄下的 news.json
+        fetch('news.json')
+            .then(response => response.json())
+            .then(data => {
+                newsText = data.text;
+                document.getElementById('content').innerText = newsText;
+            })
+            .catch(err => {
+                document.getElementById('content').innerText = "無法載入最新內容。";
+            });
+
+        // 朗讀語音功能
+        function speakNews() {
+            if (!newsText) return;
+            window.speechSynthesis.cancel(); // 停止先前的播放
+            
+            const utterance = new SpeechSynthesisUtterance(newsText);
+            utterance.lang = 'zh-TW'; // 設定台灣中文
+            utterance.rate = 1.0;     // 語速 (0.1 ~ 10)
+            
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
